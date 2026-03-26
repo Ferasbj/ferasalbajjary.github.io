@@ -400,12 +400,16 @@
         /* ── RTL adjustments ── */
         [dir="rtl"] { text-align: right; }
         [dir="rtl"] .hero, [dir="rtl"] .footer { text-align: center; }
-        [dir="rtl"] .section-header { flex-direction: row-reverse; text-align: right; }
+        [dir="rtl"] .section-header { direction: rtl; flex-direction: row; text-align: right; }
         [dir="rtl"] .section-title { text-align: right; }
+        [dir="rtl"] .section-number { order: 0; }
+        [dir="rtl"] .section-title { order: 1; }
+        [dir="rtl"] .section-line { order: 2; }
         [dir="rtl"] .hero .location { flex-direction: row-reverse; }
         [dir="rtl"] .contact-arrow svg { transform: scaleX(-1); }
         [dir="rtl"] .contact-card:hover .contact-arrow { transform: translateX(-3px); }
         [dir="rtl"] .avatar-ring img { left: auto; right: 3px; }
+        [dir="rtl"] #about > p { margin-left: auto; margin-right: 0; text-align: right; }
 
         /* ── Stagger animations ── */
         .skill-card, .cert-card, .contact-card, .highlight {
