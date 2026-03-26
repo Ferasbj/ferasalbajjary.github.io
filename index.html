@@ -151,14 +151,27 @@
         .avatar-ring {
             width: 150px; height: 150px; margin: 0 auto 32px;
             border-radius: 50%;
+            position: relative;
+            animation: ringGlow 4s ease-in-out infinite;
+        }
+        @keyframes ringGlow {
+            0%, 100% { box-shadow: 0 0 40px var(--accent-glow); }
+            50% { box-shadow: 0 0 60px rgba(99,102,241,0.35), 0 0 100px rgba(99,102,241,0.1); }
+        }
+        .avatar-ring::before {
+            content: '';
+            position: absolute; inset: 0;
+            border-radius: 50%;
             background: conic-gradient(var(--accent), var(--accent2), var(--accent3), var(--accent));
-            padding: 3px; animation: ringHue 6s linear infinite;
-            box-shadow: 0 0 40px var(--accent-glow);
+            animation: ringHue 6s linear infinite;
+            z-index: 0;
         }
         @keyframes ringHue { to { filter: hue-rotate(360deg); } }
         .avatar-ring img {
-            width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
-            display: block;
+            width: calc(100% - 6px); height: calc(100% - 6px);
+            border-radius: 50%; object-fit: cover;
+            display: block; position: relative;
+            z-index: 1; top: 3px; left: 3px;
         }
         .hero h1 {
             font-size: 44px; font-weight: 800; letter-spacing: -1.5px; line-height: 1.1;
@@ -207,7 +220,12 @@
             display: flex; flex-direction: column; align-items: center; gap: 10px;
             text-align: center; transition: all 0.3s ease;
         }
-        .skill-card:hover { border-color: var(--border-hover); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(99,102,241,0.1); }
+        .skill-card:hover {
+            border-color: var(--border-hover); transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(99,102,241,0.12); background: rgba(99,102,241,0.05);
+        }
+        .skill-card:hover .skill-icon { transform: scale(1.1); }
+        .skill-icon { transition: transform 0.3s ease; }
         .skill-icon {
             width: 40px; height: 40px; border-radius: 10px;
             display: flex; align-items: center; justify-content: center;
@@ -244,7 +262,8 @@
             backdrop-filter: blur(10px);
             transition: all 0.3s ease;
         }
-        .timeline-card:hover { border-color: var(--border-hover); box-shadow: 0 8px 30px rgba(99,102,241,0.08); }
+        .timeline-card:hover { border-color: var(--border-hover); transform: translateX(4px); box-shadow: 0 12px 40px rgba(99,102,241,0.1); }
+        [dir="rtl"] .timeline-card:hover { transform: translateX(-4px); }
         .timeline-date {
             display: inline-block; padding: 4px 12px; border-radius: 20px;
             background: rgba(99,102,241,0.1); color: var(--accent);
@@ -312,7 +331,9 @@
             display: flex; align-items: center; gap: 16px;
             transition: all 0.3s ease;
         }
-        .cert-card:hover { border-color: rgba(6,182,212,0.3); box-shadow: 0 8px 30px rgba(6,182,212,0.08); }
+        .cert-card:hover { border-color: rgba(6,182,212,0.3); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(6,182,212,0.1); }
+        .cert-card:hover .cert-badge { transform: scale(1.08) rotate(3deg); }
+        .cert-badge { transition: transform 0.3s ease; }
         .cert-badge {
             width: 56px; height: 56px; border-radius: 14px; flex-shrink: 0;
             background: linear-gradient(135deg, rgba(6,182,212,0.15), rgba(99,102,241,0.15));
@@ -337,9 +358,11 @@
             transition: all 0.3s ease; position: relative; overflow: hidden;
         }
         .contact-card:hover {
-            transform: translateY(-2px); border-color: var(--border-hover);
-            box-shadow: 0 8px 30px rgba(99,102,241,0.1);
+            transform: translateY(-3px) scale(1.01); border-color: var(--border-hover);
+            box-shadow: 0 12px 40px rgba(99,102,241,0.12);
         }
+        .contact-card:hover .contact-icon { transform: scale(1.1); }
+        .contact-icon { transition: transform 0.3s ease; }
         .contact-icon {
             width: 42px; height: 42px; border-radius: 12px; flex-shrink: 0;
             display: flex; align-items: center; justify-content: center;
@@ -377,8 +400,70 @@
         /* ── RTL adjustments ── */
         [dir="rtl"] { text-align: right; }
         [dir="rtl"] .hero, [dir="rtl"] .footer { text-align: center; }
-        [dir="rtl"] .section-header { flex-direction: row-reverse; }
+        [dir="rtl"] .section-header { flex-direction: row-reverse; text-align: right; }
+        [dir="rtl"] .section-title { text-align: right; }
         [dir="rtl"] .hero .location { flex-direction: row-reverse; }
+        [dir="rtl"] .contact-arrow svg { transform: scaleX(-1); }
+        [dir="rtl"] .contact-card:hover .contact-arrow { transform: translateX(-3px); }
+        [dir="rtl"] .avatar-ring img { left: auto; right: 3px; }
+
+        /* ── Stagger animations ── */
+        .skill-card, .cert-card, .contact-card, .highlight {
+            opacity: 0; transform: translateY(16px);
+            transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+        }
+        .stagger-in { opacity: 1 !important; transform: translateY(0) !important; }
+
+        /* ── Typing cursor ── */
+        .typing-cursor {
+            display: inline-block; width: 2px; height: 1em;
+            background: var(--accent2); margin-left: 4px;
+            animation: blink 0.8s step-end infinite;
+            vertical-align: text-bottom;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* ── Navbar active link ── */
+        .nav-links a { position: relative; }
+        .nav-links a::after {
+            content: ''; position: absolute;
+            bottom: -4px; left: 50%; transform: translateX(-50%);
+            width: 0; height: 2px; background: var(--accent);
+            border-radius: 1px; transition: width 0.3s ease;
+        }
+        .nav-links a.active { color: var(--accent); }
+        .nav-links a.active::after { width: 100%; }
+
+        /* ── Floating shapes ── */
+        .floating-shapes { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+        .floating-shape {
+            position: absolute;
+            border: 1px solid rgba(99,102,241,0.08);
+            border-radius: 4px; opacity: 0.4;
+            animation: floatShape linear infinite;
+        }
+        @keyframes floatShape {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.4; }
+            90% { opacity: 0.4; }
+            100% { transform: translateY(-10vh) rotate(180deg); opacity: 0; }
+        }
+
+        /* ── Social icon pulse ── */
+        .hero-socials .social-icon { animation: subtlePulse 3s ease-in-out infinite; }
+        .hero-socials .social-icon:nth-child(1) { animation-delay: 0s; }
+        .hero-socials .social-icon:nth-child(2) { animation-delay: 0.3s; }
+        .hero-socials .social-icon:nth-child(3) { animation-delay: 0.6s; }
+        .hero-socials .social-icon:nth-child(4) { animation-delay: 0.9s; }
+        @keyframes subtlePulse {
+            0%, 100% { box-shadow: 0 0 0 0 transparent; }
+            50% { box-shadow: 0 0 0 4px rgba(99,102,241,0.1); }
+        }
+
+        /* ── Press feedback ── */
+        .social-icon:active, .contact-card:active, .skill-card:active, .lang-btn:active {
+            transform: scale(0.96) !important; transition-duration: 0.1s;
+        }
     </style>
 </head>
 <body>
@@ -705,11 +790,77 @@ document.querySelectorAll('.nav-links a[href]').forEach(a => {
     a.addEventListener('click', () => document.getElementById('navLinks').classList.remove('open'));
 });
 
-// ── Scroll reveal ──
+// ── Scroll reveal with stagger ──
 const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+    entries.forEach(e => {
+        if (e.isIntersecting) {
+            e.target.classList.add('visible');
+            const children = e.target.querySelectorAll('.skill-card, .cert-card, .contact-card, .highlight');
+            children.forEach((child, i) => {
+                child.style.transitionDelay = (i * 0.07) + 's';
+                requestAnimationFrame(() => child.classList.add('stagger-in'));
+            });
+        }
+    });
 }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ── Floating geometric shapes ──
+(function() {
+    const container = document.createElement('div');
+    container.className = 'floating-shapes';
+    document.body.insertBefore(container, document.body.firstChild);
+    for (let i = 0; i < 6; i++) {
+        const shape = document.createElement('div');
+        shape.className = 'floating-shape';
+        const size = 20 + Math.random() * 40;
+        shape.style.width = size + 'px';
+        shape.style.height = size + 'px';
+        shape.style.left = Math.random() * 100 + '%';
+        shape.style.animationDuration = (20 + Math.random() * 20) + 's';
+        shape.style.animationDelay = Math.random() * 15 + 's';
+        if (Math.random() > 0.5) shape.style.borderRadius = '50%';
+        container.appendChild(shape);
+    }
+})();
+
+// ── Active nav link on scroll ──
+(function() {
+    const sections = document.querySelectorAll('section[id]');
+    const navAnchors = document.querySelectorAll('.nav-links a[href^="#"]');
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+            if (window.scrollY >= section.offsetTop - 120) current = section.id;
+        });
+        navAnchors.forEach(a => {
+            a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+        });
+    });
+})();
+
+// ── Typing effect ──
+function typeText(el, text) {
+    el.textContent = '';
+    const cursor = document.createElement('span');
+    cursor.className = 'typing-cursor';
+    el.appendChild(cursor);
+    let i = 0;
+    function step() {
+        if (i < text.length) {
+            el.insertBefore(document.createTextNode(text[i]), cursor);
+            i++;
+            setTimeout(step, 50 + Math.random() * 40);
+        } else {
+            setTimeout(() => cursor.style.display = 'none', 2000);
+        }
+    }
+    step();
+}
+(function() {
+    const el = document.querySelector('.hero .subtitle');
+    if (el) setTimeout(() => typeText(el, el.textContent), 800);
+})();
 
 // ── i18n Translations ──
 const translations = {
@@ -838,9 +989,16 @@ function setLanguage(lang) {
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         if (translations[lang] && translations[lang][key]) {
+            if (key === 'hero_title') return; // handled by typing effect below
             el.textContent = translations[lang][key];
         }
     });
+
+    // Re-trigger typing effect for subtitle
+    const subtitleEl = document.querySelector('.hero .subtitle');
+    if (subtitleEl && translations[lang]) {
+        typeText(subtitleEl, translations[lang].hero_title);
+    }
 
     document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.lang === lang);
